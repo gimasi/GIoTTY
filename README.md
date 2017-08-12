@@ -1,7 +1,7 @@
 
 ** Work in progress... we are building the documentation, so please be patient!**
 
-# GIoTTY  (Yet Another IoT Plaform)
+# GIoTTY  (Yet Another IoT Platform)
 ## Introduction
 GIoTTY is Gimasi's IoT platform. The keyword is convention over configuration as well as open source technolgies, we are leveraging the most used and commons frameworks: node.js, RabbitMQ, InfluxDB, Postgres, Cassandra and more to come as we grow.<br/>
 
@@ -43,8 +43,22 @@ We also have <b>output</b> objects, with which the user scripts can comunicate w
 ### Decoder
 ### Alert
 ### Application Script
+* out_params
+This data is serialized and passed over the 'scripts' key in the queue message
+
+
+* save_timeseries
+
+<br/>
+ ```json
+ [
+  {"time_series1": {key1:value1, key1:value2 },
+  {"time_series2": {key1:value1, key1:value2 }
+ ]
+ ```
 
 * call_endpoints 
+
 <br/>
  ```json
 {  
