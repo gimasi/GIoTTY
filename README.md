@@ -50,7 +50,7 @@ This data is serialized and passed over the 'scripts' key in the queue message
 * save_timeseries
 
 <br/>
- ```json
+ ```javascript
  [
   {"time_series1": {key1:value1, key1:value2 },
   {"time_series2": {key1:value1, key1:value2 }
@@ -60,7 +60,7 @@ This data is serialized and passed over the 'scripts' key in the queue message
 * call_endpoints 
 
 <br/>
- ```json
+ ```javascript
 {  
    "policy":"disable|overrride|add",
    "endpoints":[  
