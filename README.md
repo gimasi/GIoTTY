@@ -92,6 +92,7 @@ This data is serialized and passed over the 'scripts' key in the queue message
 
 ## RAW MESSAGE
 
+```javascript
 { 
   id: 'ed391069-8363-460e-a1b1-8db95cf32434',
   
@@ -166,8 +167,11 @@ This data is serialized and passed over the 'scripts' key in the queue message
 
   }
 
+```
+
 
 ## DECODER
+Here is an example script<br/>
 
 ```javascript
 
