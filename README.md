@@ -40,6 +40,41 @@ Users can customize the behaviour of the pipeline via Javascript sripts. At ever
 
 We also have <b>output</b> objects, with which the user scripts can comunicate with the core infrastructure of GIoTTY, depending at which level your script is running you can have different objects.
 
+### Decoder
+### Alert
+### Application Script
+
+* call_endpoints 
+<br/>
+ ```json
+{  
+   "policy":"disable|overrride|add",
+   "endpoints":[  
+      {  
+         "http":{  
+            "options":""
+         }
+      },
+      {  
+         "email":{  
+            "from":"",
+            "to":"",
+            "subject":"",
+            "body":""
+         }
+      },
+      {  
+         "mqtt":{  
+
+         }
+      },
+      {  
+         "giotty":"id_of_external_cloud"
+      }
+   ]
+}
+
+ ```
 
 ## RAW MESSAGE
 
