@@ -11,18 +11,29 @@ The core of GioTTY is based on an message queue which is interleaved by scripts 
 
 The message queue steps are:<br/>
 
-        <b>Uplinks</b> => <b>Decoder</b> => <b>Alerts</b> => <b>Application Scripts</b> => <b>Endpoints</b> 
+        [need picture to describe this]
+        Uplinks => Decoder => Alerts => Application Scripts => Endpoints 
 
 This message queue runs from the node (on the field) to the final Application Server Endpoint.<br/>
 
 There is a special internal 'Endpoint':
         DashBoards
 
-Which is the GIoTTY fully customized HTML5 Dashboard system, that enables very quickly to build 'fully featured' Dashboard to visualize your IoT data.<br/>
+Which is the GIoTTY fully customized HTML5 Dashboard system, allowing to build  'fully featured' Dashboards for your IoT data.<br/>
 
 There is also a queue that runs the 'other' way, from the Application Server to the nodes. This is used to actuate actuators on the field.
 
-      <b>Downlinks</b> => <b>Output</b>
+      [need picture to describe this]
+      Downlinks => Output
+
+## MVC in IoT or DASE
+Our vision takes the classical MVC concept and brings it over to the IoT<br>
+
+* Model: GIoTTY <b>Decoder / Alert
+* Controller: GIoTTY Application Script
+* View: GIoTTY Endpoint
+
+The Controller can interfere with the final 'rendering' of the IoT 'View', redirecting or adding the final Endpoint where data should arrive.
 
 ## Core Pipeline
 
@@ -33,9 +44,12 @@ The core is a pipeline of Exchanges - driven by RabbitMQ - every step is handled
 The node data enters the pipeline and is logged, then a Decoder script is executed which transforms the raw payload data in schema variables - every node has a predefined schema. The alert script, application alert, is then executed; here the user can specify application alerts that can be fired. The final 'Application Script' is executed to handle complex logic or define where the data
 The Application script can handle data trasmission to other node to achieve sensor/actuator logic.
 
+# Node Schema
+Every node can have a schema assigned.<br/>
+If you have a temperature sensor, it's schema would be logically 'temperature'
 
 
-## Scripting
+# Scripting
 Users can customize the behaviour of the pipeline via Javascript sripts. At every stage the scripting engine will provide INPUT objects to the script:<br/>
 
  * node_data 
@@ -245,3 +259,11 @@ Here an example of the message to be sent:
   "schema":"{ "temperature":"25.4","relais":"1"}
 }
 ```
+
+DAE (Decoder-Alert-Controller-Enpoint)
+
+MVC =>
+
+Model => Decoder / Alert
+Controller => Script
+View => Endpoint
