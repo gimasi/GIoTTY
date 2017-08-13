@@ -256,6 +256,6 @@ Here an example of the message to be sent:
   "node_id":"bb8eb961-7d98-471a-bb5e-44ecc9c961fb",
   "message_type":"payload|schema",
   "payload":"_HEX_STRING_",
-  "schema":"{ "temperature":"25.4","relais":"1"}
+  "schema": { "temperature":"25.4","relais":"1"}
 }
 ```
