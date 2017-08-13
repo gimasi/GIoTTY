@@ -270,3 +270,41 @@ Here an example of the message to be sent:
   "schema": { "temperature":"25.4","relais":"1"}
 }
 ```
+
+# GROUPS
+In GIoTTY you can define groups of nodes.<br/>
+Groups have special aggregation 'schema' functions can be specified on any of the 'nodes' schema variables.<br>
+Once defined the data is automatically accumulated and you will have timeseries for the specified 'aggregration schema variables'.<br>
+Groups can be used also to assign scripts to nodes without having to add one by one..
+
+
+# APPS
+In GIoTTY you have to specify at least one <b>App</b> to start adding you nodes.<br/>
+The Apps concept is like a namespace so that you can easily separata you nodes and actuators in different 'Applications'. 
+Every App will have its own: Nodes, Groups and Dashboards
+Scripts are instead transversal to all Apps.
+
+# ENDPOINTS
+As described before endpoints are the 'physical' endpoints to where the data will be forwarded. You can developed an application with full logic completely in GIoTTY infrastructure with no need to call external endpoints.<bt/>
+Currently we are supporting:
+
+* HTTP Rest 
+* Email
+* MQTT
+* Microsoft Azure
+
+
+# ALERTS
+This functionality will show you the Alerts Log of your applications.
+You can see which alert are pending.
+
+# LOGS
+
+
+# MAPS
+
+
+# DASHBOARDS
+
+
+
