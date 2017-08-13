@@ -3,9 +3,28 @@
 
 # GIoTTY  (Yet Another IoT Platform)
 ## Introduction
-GIoTTY is Gimasi's IoT platform. The keyword is convention over configuration as well as open source technolgies, we are leveraging the most used and commons frameworks: node.js, RabbitMQ, InfluxDB, Postgres, Cassandra and more to come as we grow.<br/>
+GIoTTY is Gimasi's IoT platform. The keyword is convention over configuration.<br/>
+The whole goal of GIoTTY, as of any IoT platform, is to connect physical nodes which can be sensors or actuators, driven by different IoT technologies ( LoRaWAN, ZigBee, NBIoT etc.), acquiring data for local computation or simply forwarding it to other application servers, and/or sending back data to actuators either directly or again from other application servers.<br/>
+GIoTTY can be seen as an IoT HAL - Hardware Abstraction Layer - that connects different technologies converting everything to...<br/>
 
-The platform was born to handle LoRaWAN nodes but has grown with connectors for practically all IoT technologies..<br/>
+The core of GioTTY is based on an message queue which is interleaved by scripts that are executed as the the node data passes through the queue enriching its payload with additional application data.<br/>
+
+The message queue steps are:<br/>
+
+        <b>Uplinks</b> => <b>Decoder</b> => <b>Alerts</b> => <b>Application Scripts</b> => <b>Endpoints</b> 
+
+This message queue runs from the node (on the field) to the final Application Server Endpoint.<br/>
+
+There is a special internal 'Endpoint':
+        DashBoards
+
+Which is the GIoTTY fully customized HTML5 Dashboard system, that enables very quickly to build 'fully featured' Dashboard to visualize your IoT data.<br/>
+
+There is also a queue that runs the 'other' way, from the Application Server to the nodes. This is used to actuate actuators on the field.
+
+      <b>Downlinks</b> => <b>Output</b>
+
+## Core Pipeline
 
 The core is a pipeline of Exchanges - driven by RabbitMQ - every step is handled by user 'scripts' which will enrich the message as it flows by.<br/>
 	
@@ -14,9 +33,6 @@ The core is a pipeline of Exchanges - driven by RabbitMQ - every step is handled
 The node data enters the pipeline and is logged, then a Decoder script is executed which transforms the raw payload data in schema variables - every node has a predefined schema. The alert script, application alert, is then executed; here the user can specify application alerts that can be fired. The final 'Application Script' is executed to handle complex logic or define where the data
 The Application script can handle data trasmission to other node to achieve sensor/actuator logic.
 
-
-
-While GIoTTY is a complete standalone IoT plaform, which includes also dashboards and reporting, it can be used as a middleware to connect physical nodes to other IoT platforms/frameworks, we have connectors for Microsoft Azure, IBM Watson and Amazon AWS and more can be added, being everything scriptable by the user. 
 
 
 ## Scripting
@@ -37,8 +53,9 @@ Users can customize the behaviour of the pipeline via Javascript sripts. At ever
 
  ```
 
-
 We also have <b>output</b> objects, with which the user scripts can comunicate with the core infrastructure of GIoTTY, depending at which level your script is running you can have different objects.
+* 
+*
 
 ### Decoder
 ### Alert
@@ -210,5 +227,21 @@ if ((byte_data[0] == 0x01 ) || (byte_data[0] == 0x02 )){
 
 	out_params = _params;
    	
+}
+```
+
+##DOWNLINKS
+To send data to a node you can use the REST interface or passing data through the the 'downlinks' RabbitMQ exchange.<br/>
+Messages must be authenticated via an Auth Token.<br/>
+
+Here an example of the message to be sent:
+
+```javascript
+{
+  "auth_token":"hjsa78huh23vhsg9",
+  "node_id":"bb8eb961-7d98-471a-bb5e-44ecc9c961fb",
+  "message_type":"payload|schema",
+  "payload":"_HEX_STRING_".
+  "schema":"{ "temperature":"25.4","relais":"1"}
 }
 ```
