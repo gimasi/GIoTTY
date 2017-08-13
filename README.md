@@ -29,9 +29,9 @@ There is also a queue that runs the 'other' way, from the Application Server to 
 ## MVC in IoT or DASE
 Our vision takes the classical MVC concept and brings it over to the IoT<br>
 
-* Model: GIoTTY <b>Decoder / Alert
-* Controller: GIoTTY Application Script
-* View: GIoTTY Endpoint
+* Model: GIoTTY <b>Decoder / Alert</b>
+* Controller: GIoTTY <b>Application Script</b>
+* View: GIoTTY <b>Endpoint</b>
 
 The Controller can interfere with the final 'rendering' of the IoT 'View', redirecting or adding the final Endpoint where data should arrive.
 
@@ -259,11 +259,3 @@ Here an example of the message to be sent:
   "schema":"{ "temperature":"25.4","relais":"1"}
 }
 ```
-
-DAE (Decoder-Alert-Controller-Enpoint)
-
-MVC =>
-
-Model => Decoder / Alert
-Controller => Script
-View => Endpoint
