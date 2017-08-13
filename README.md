@@ -121,6 +121,17 @@ This data is serialized and passed over the 'scripts' key in the queue message
 
  ```
 
+ * send_to_node
+
+ ```javascript
+ [
+
+  {"node_id": "", "message_type":"payload|schema", "payload":"_HEX_STRING_","schema":{ "temperature":"25.4","relay":"1"}},
+  {"node_id": "", "message_type":"payload|schema", "payload":"_HEX_STRING_","schema":{ "temperature":"25.4","relay":"1"}}
+]
+
+```
+
 ## RAW MESSAGE
 
 ```javascript
