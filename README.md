@@ -27,7 +27,7 @@ As introduced above there is also a queue that runs the 'other' way, from the Ap
       Downlinks => Output
 
 ## MVC in IoT or DASE
-The whole design is to mimic the MVC design delivering an IoT metaphor DA-S-E<br>
+The whole design mimics the MVC pattern delivering an IoT metaphor DA-S-E<br>
 
 * Model: GIoTTY <b>Decoder / Alert</b>
 * Controller: GIoTTY <b>Application Script</b>
@@ -47,12 +47,12 @@ The final 'Application Script' is executed to handle complex logic, storing to t
 In other IoT platforms scripting is available but it is usually condensed in just one script per node, we have designed this fragmented setup to achieve a better code optimization and reuse. Smaller scripts that are finalized to just one task. For example you could have 1000 of temperature nodes that share the same 'Temperature Decoder' script, but need different Alerting scripts. Or you can have alerting scripts that check if water temperature is reaching boiling value, and this script will work anywhere a 'boiling water' alarm is needed. 
 
 
-# Node Schema and Decoder and Encoder Script
-Every node can have a schema assigned.<br/>
+# Node Schema, Decoder and Encoder Scripts
+Every node can (should) have a schema defined.<br/>
 If you have a temperature sensor, it's schema variable would be logically called 'temperature'.
 A schema needs a <b>decoder script</b> that runs in parallel with the schema. The decoder script will receive the raw data from the node and convert it to schema variables, that will be used throughout the system.<br/>
 Schema variables can be declared both as <b>OUPUTS</b>, in this 'temperature' example the schema variable will be an OUTPUT, or as <b>INPUTS</b> which will be used by actuators when you need to set a value on the node.<br>
-For input schema variable you need a corresponfing <b>Encoder Script</b> that will convert physical values that have been computed by your scripts to the actual hexdecimal data that the node is expecting to receive.<br>
+For ouptut schema variable you need a corresponding <b>Encoder Script</b> that will convert physical values that have been computed by your scripts to the raw payload data that the node is expecting to receive.<br>
 Here an exmple of a Decoder script:<br>
 ```javascript
 
@@ -150,7 +150,6 @@ log(payload3);
 node_payload = "02"+payload1+payload2+"01"+payload3
 
  ```
-
 
 
 # Scripting
