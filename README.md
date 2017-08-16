@@ -184,12 +184,15 @@ If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</B
 ```javascript
 
 // JSON rappresentation of the schema object
+ 
  {
-  "humidity": {"type": "Numeric", "mode":"output", "value":"76", measuremnt_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": false},
-  "airpressure": {"type": "Numeric", "mode":"output", "value":"76", "measuremnt_unit": "hPa", "max_value": "", "min_value": "", "store_in_time_series": false},
-  "cellvoltage": {"type": "Numeric", "mode":"output", "value":"76", "measuremnt_unit": "V", "max_value": "", "min_value": "", "store_in_time_series": false}, 
-  "stateofcharge": {"type": "Numeric","mode":"output",  "value":"76","measuremnt_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": false}, 
-  "airtemperature": {"type": "Numeric", "mode":"output", "value":"76","measuremnt_unit": "°C", "max_value": "", "min_value": "", "store_in_time_series": false}
+ 
+  "humidity": {"type": "Numeric", "mode":"output", "value":"76", measuremnt_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": "false"},
+  "airpressure": {"type": "Numeric", "mode":"output", "value":"76", "measuremnt_unit": "hPa", "max_value": "", "min_value": "", "store_in_time_series": "false"},
+  "cellvoltage": {"type": "Numeric", "mode":"output", "value":"76", "measuremnt_unit": "V", "max_value": "", "min_value": "", "store_in_time_series": "false"}, 
+  "stateofcharge": {"type": "Numeric","mode":"output",  "value":"76","measuremnt_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": "false"}, 
+  "airtemperature": {"type": "Numeric", "mode":"output", "value":"76","measuremnt_unit": "°C", "max_value": "", "min_value": "", "store_in_time_series": "false"}
+ 
  }
 
 
