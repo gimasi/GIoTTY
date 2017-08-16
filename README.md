@@ -187,11 +187,11 @@ If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</B
  
  {
  
-  "humidity": {"type": "Numeric", "mode":"output", "value":"76", measuremnt_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": "false"},
-  "airpressure": {"type": "Numeric", "mode":"output", "value":"76", "measuremnt_unit": "hPa", "max_value": "", "min_value": "", "store_in_time_series": "false"},
-  "cellvoltage": {"type": "Numeric", "mode":"output", "value":"76", "measuremnt_unit": "V", "max_value": "", "min_value": "", "store_in_time_series": "false"}, 
-  "stateofcharge": {"type": "Numeric","mode":"output",  "value":"76","measuremnt_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": "false"}, 
-  "airtemperature": {"type": "Numeric", "mode":"output", "value":"76","measuremnt_unit": "°C", "max_value": "", "min_value": "", "store_in_time_series": "false"}
+  "humidity": {"type": "Numeric", "mode":"output", "value":"76", "measurement_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": "false"},
+  "airpressure": {"type": "Numeric", "mode":"output", "value":"76", "measurement_unit": "hPa", "max_value": "", "min_value": "", "store_in_time_series": "false"},
+  "cellvoltage": {"type": "Numeric", "mode":"output", "value":"76", "measurement_unit": "V", "max_value": "", "min_value": "", "store_in_time_series": "false"}, 
+  "stateofcharge": {"type": "Numeric","mode":"output",  "value":"76","measurement_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": "false"}, 
+  "airtemperature": {"type": "Numeric", "mode":"output", "value":"76","measurement_unit": "°C", "max_value": "", "min_value": "", "store_in_time_series": "false"}
  
  }
 
