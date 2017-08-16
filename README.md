@@ -305,14 +305,22 @@ update_alerts = alerts;
 
 <b>Input</b>
 
-* raw_data
-This is the message arriving directly from the node, it's payload will vary depending on the RF technology
+* <b>raw_data</b><br/>
+This is the message arriving directly from the node ( same as in the Decoder script).
 
-* schema
+* <b>schema</b><br/>
 Schema variables that have been updated by the Decoder script. Usually these are the variables used to trigger alerts.
 
-* alerts
-Object describing current alert status.
+* <b>alerts</b><br/>
+An array describing the current alerts status. If an alert is continously opened, ie. the alert is still on,  it is updated, with the updated_at and duration variables that reflect the last update time.<br/>
+
+Here the JSON object of alerts
+
+```javascript
+[
+"temperature": {"type": "max", "status": "active", "message": "Max temperature exceeded: 20.19 > 11.802603092029429", "alert_id": 12689, "duration": 10291, "endpoints": [], "last_value": 20.59, "started_at": "2017-08-16T14:33:45.616Z", "updated_at": "2017-08-16T14:33:55.907Z"}}}
+]
+```
 
 <b>Output</b>
 
