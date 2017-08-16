@@ -214,13 +214,13 @@ If a variable has not been declared in the schema it will not be updated.
  // weight variable does not exist and will not be added/updated
  // no errors will be raised it will be simply ignored
 
- node_scheam.wright = {}
+ node_scheam.weight = {}
  node_schema.weight.value = 50;
 ``` 
 
  <b>Output</b>
 
- * update_schema
+ * <b>update_schema</b><br/>
  Updating this object will update the schema values.
 
 ```javascript
