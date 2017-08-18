@@ -175,10 +175,10 @@ If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</B
 
 <b>Input</b>
 
- * raw_data
+ * <b>raw_data</b><br/>
  This is the message arriving directly from the node, it's payload will vary depending on the RF technology
 
- * schema
+ * <b>schema</b><br/>
  Here is an example of a schema, which is a list of variables keys with their characteristics:
 
 ```javascript
@@ -187,13 +187,10 @@ If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</B
  
  {
  
-  "humidity": {"type": "Numeric", "mode":"output", "value":"76", "measurement_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": "false"},
-  "airpressure": {"type": "Numeric", "mode":"output", "value":"76", "measurement_unit": "hPa", "max_value": "", "min_value": "", "store_in_time_series": "false"},
-  "cellvoltage": {"type": "Numeric", "mode":"output", "value":"76", "measurement_unit": "V", "max_value": "", "min_value": "", "store_in_time_series": "false"}, 
-  "stateofcharge": {"type": "Numeric","mode":"output",  "value":"76","measurement_unit": "%", "max_value": "", "min_value": "", "store_in_time_series": "false"}, 
-  "airtemperature": {"type": "Numeric", "mode":"output", "value":"76","measurement_unit": "°C", "max_value": "", "min_value": "", "store_in_time_series": "false"}
+  "humidity": {"type": "Numeric", "mode":"output", "value":"76", "measurement_unit": "%", "max_value": "", "min_value": "", "updated_at": "2017-08-17T21:25:25Z", "store_in_time_series": "false"},
+  "airtemperature": {"type": "Numeric", "mode":"output", "value":"24.2","measurement_unit": "°C", "max_value": "", "min_value": "","updated_at": "2017-08-17T21:25:25Z", "store_in_time_series": "false"}
  
- }
+ 
 
 
  // Javascript object
@@ -201,11 +198,11 @@ If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</B
  var node_schema = schema;
 
  node_schema.humidity.value = 50;
- node_schema.humidity.cellvoltage = 50;
+ node_schema.airtemperature.value = 23.2;
 
  ```
 
-In the decoder script only the schema <b>output</b> variables are exposed. All attributes, apart from value, are read only and cannot be updated by the script via the update_schema object.
+In the decoder script only the schema <b>output</b> variables are exposed. All attributes, apart from value, are read only and cannot be updated by the script via the update_schema object. The updated_at is the last time in which the variable has been updated.<br/>
 If a variable has not been declared in the schema it will not be updated.
 
 
@@ -239,9 +236,18 @@ update_schema = node_schema;
 The Alert script is used to generate application level alerts. Usually based on the schema values that have been updated in the Decoder script.<br/>
 Alerts can be opened or closed, and can have assigned an 'endpoint' that can be called on an open or close event.
 Alerts have unique keys that define them - the variable on which you are testing and the an attribute that usually defines the test you are applying. For example, if we want to test an alert for boiling water temperature, the alert keys will be: 'temperature'-'max'.<br/>
+The alerts are set by passing an array of alerts to the <b>update_alerts</b> object. Here is the JSON structure of the alerts array:
+
+```javascript
+
+[
+    {"variable_name":"","type":"", "status":"open|close", "value":"", "message":"", "endpoints":[ ]},
+    {"variable_name":"","type":"", "status":"open|close", "value":"", "message":"", "endpoints":[ ]}
+]
+
+```
 
 
-{"core": {"external_clouds": {"external_cloud_undefined": {"alert_id": 12543, "alert_type": "external_cloud_undefined", "alert_message": "ERROR_EXTERNAL_CLOUD_EMAIL"}}}, "application": {"humidity": {"type": "max", "status": "active", "message": "Max humidity exceeded.", "alert_id": 12556, "duration": 4739902, "endpoints": [], "last_value": 174.4, "started_at": "2017-08-15T12:29:08.861Z", "updated_at": "2017-08-15T13:48:08.763Z"}, "temperature": {"type": "max", "status": "active", "message": "Max temperature exceeded.", "alert_id": 12557, "duration": 4739901, "endpoints": [], "last_value": 174.4, "started_at": "2017-08-15T12:29:08.862Z", "updated_at": "2017-08-15T13:48:08.763Z"}}}
 
 Here the code example:
 
@@ -269,7 +275,7 @@ Once an alert is opened it will not trigger anymore unless you close it. If you 
 
 ```javascript
 
- // Alert script to test if water is boiling
+ // Multi level alert on same variable
 
  var node_schema = schema;
 
@@ -325,6 +331,7 @@ Here the JSON object of alerts
 <b>Output</b>
 
 * update_alerts
+
 
 ## Application Script
 The application script can be seen as the controller in the MVC model.<br/>
