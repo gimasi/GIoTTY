@@ -292,7 +292,7 @@ If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</b
 
  * <b>schema</b><br/>
  The schema available in the object reflects the schema defined at node level with the last updated values, <b>value</b> and <b>updated_at</b>
- Here is an example of a schema, which is a list of variables keys with their characteristics:
+ Here is an example of a schema, which is a list of variables keys with their attributes:
 
 ```javascript
  
@@ -321,18 +321,7 @@ If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</b
  message = "Temperature is "+current_temperature+ " "+measurement_unit;
  ```
 
-In the decoder script only the schema <b>output</b> variables are exposed. All attributes, apart from value, are read only and cannot be updated by the script via the update_schema object. The updated_at is the last time in which the variable has been updated.<br/>
-If a variable has not been declared in the schema it will not be updated.
-
-
-```javascript
-
- // weight variable does not exist and will not be added/updated
- // no errors will be raised it will be simply ignored
-
- node_scheam.weight = {}
- node_schema.weight.value = 50;
-``` 
+In the decoder script only the schema <b>OUTPUT</b> variables are exposed. All attributes, apart from value, are read only and cannot be updated by the script via the update_schema object.<br/>
 
  <b>Output</b>
 
@@ -351,8 +340,22 @@ If a variable has not been declared in the schema it will not be updated.
 update_schema = node_schema; 
 ```
 
+If a variable has not been declared in the schema it will be ignored..
+
+```javascript
+
+ node_scheam.weight = {}
+ node_schema.weight.value = 50;
+
+ // weight variable does not exist and will not be added/updated
+ // no errors will be raised it will be simply ignored
+
+ update_schema = node_schema; 
+
+``` 
+
 ## Alert
-The Alert script is used to generate application level alerts. Usually based on the schema values that have been updated in the Decoder script.<br/>
+The Alert script is used to generate application level alerts. Usually based on the schema values that have been updated by the Decoder script.<br/>
 Alerts can be opened or closed, and can have assigned an 'endpoint' that can be called on an open or close event.
 Alerts have unique keys that define them - the variable on which you are testing and the an attribute that usually defines the test you are applying. For example, if we want to test an alert for boiling water temperature, the alert keys will be: 'temperature'-'max'.<br/>
 The alerts are set by passing an array of alerts to the <b>update_alerts</b> object. Here is the JSON structure of the alerts array:
@@ -365,8 +368,6 @@ The alerts are set by passing an array of alerts to the <b>update_alerts</b> obj
 ]
 
 ```
-
-
 
 Here the code example:
 
@@ -446,11 +447,47 @@ Here the JSON object of alerts
 "temperature": {"type": "max", "status": "active", "message": "Max temperature exceeded: 20.19 > 11.802603092029429", "alert_id": 12689, "duration": 10291, "endpoints": [], "last_value": 20.59, "started_at": "2017-08-16T14:33:45.616Z", "updated_at": "2017-08-16T14:33:55.907Z"}}}
 ]
 ```
+* <b>storage</b>
+The <b>storage</b> objects gives acces to a series of storage function that allow the script to persist data. There are two storages - local and global. The local storage is accessible only to the node while the global storage is accessible to all nodes in the Application. To use the global storage you have 2 methods get and set, that will store a key value pair, instead to use the local storage you need to update the <b>update_local_storage</b> OUTPUT object <b>update_storage</b> ( more information in the STORAGE section )<br/>
+Here is an example:<br/>
+
+```javascript
+
+object = {};
+object.node_id = raw_data.node_id;
+object.variable = 1;
+
+log("****STORAGE***");
+log( raw_data.core_session_id);
+
+log("NODE:"+raw_data.node_id);
+
+storage.global.get("myVariable",function(err,reply){	  
+  if ( reply )          
+    console.log("myVariable is set => "+reply.toString());      
+  else  {    
+    log("myVariable is not set");  	    
+    variable = "The node that set the variable is :"+raw_data.node_id;        
+    storage.global.set("myVariable",variable, function (err, reply) {        
+      log("Node=>"+raw_data.node_id);      
+  	  log(err);
+      log(reply);        	
+    });      
+  }})
+
+
+if (raw_data.node_id == 'bb8eb961-7d98-471a-bb5e-44ecc9c961fb')
+  update_local_storage = object;
+
+```
 
 <b>Output</b>
 
-* update_alerts
+* update_alerts<br/>
+As shown in the example above the object that will receive the data for openning/closing alerts.
 
+* update_local_storage<br/>
+To store local node persistent data.
 
 ## Application Script
 The application script can be seen as the controller in the MVC model.<br/>
