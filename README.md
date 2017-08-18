@@ -200,36 +200,125 @@ Here, divided by script type, the various INPUT and OUTPUT objects available and
 
 ## Decoder
 The script will receive in input the <b>raw_data</b> and the <b>schema</b> objects. The code will then update the schema values and pass them over via the output <b>update_schema</b> object.<br/>
-The decoder script engine will automatically store schema variables, that have been flagged accordingly, to a <b>Time Series</b> ( see [pollo](#TIME SERIES) section ).<br>
-If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</B> allowing different kinds of aggregation. Also if a Group has a Decoder Script assigned all nodes part of the group will inherit that script ( see GROUP section for full description).
+The decoder script engine will automatically store schema variables, that have been flagged accordingly, to a <b>Time Series</b> ( see TIME SERIES) section ).<br>
+If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</b> allowing different kinds of aggregation. Also if a Group has a Decoder Script assigned all nodes part of the group will inherit that script ( see GROUP section for full description).
 
 <b>Input</b>
 
  * <b>raw_data</b><br/>
- This is the message arriving directly from the node, it's payload will vary depending on the RF technology
+ This is the message arriving directly from the node, it's payload will vary depending on the RF technology.<br/>
+
+ Here an example of the LoRaWAN raw message payload:<br/>
+ 
+ ```javascript
+ { 
+  id: 'ed391069-8363-460e-a1b1-8db95cf32434',
+
+  instance_id: 'fcc60389-e8ba-4657-b6e1-cd6894171b48',
+  company_id: '7ec6394d-9a92-4a28-86e6-eb141e9d722e',
+  user_id: 'e23ec145-6cc0-4af7-bdae-6c9c04f3b03b',
+  app_id: '9bda6968-3848-4738-8266-76b94521f5d5',
+
+  node_id: 'bb8eb961-7d98-471a-bb5e-44ecc9c961fb',
+  
+  log_type: 'data_up',
+  
+  app_id: '9bda6968-3848-4738-8266-76b94521f5d5',
+  node_id: 'bb8eb961-7d98-471a-bb5e-44ecc9c961fb',
+  node_type_code: 'lora868',
+  
+  node_multicast: false,
+  
+  station_id: '831e34f2-55cc-4d89-b2df-2291d60125b4',
+  
+  gateway_id: '0000AA555A00ABCD',
+  
+  payload: '010b8f',
+  
+  snr: 5.1,
+  rssi: -35,
+  
+  other:
+    { DataUp:
+  
+      { MHDR: [Object],
+        DevAddr: '48100012',
+        Fctrl: [Object],
+        FCnt: 0,
+        FOpts: '',
+        FPort: 4,
+        FPayloadType: 'data',
+        FPayload: '07f168',
+        FPayloadDeciphered: '010b8f',
+        FullFrame: '40120010480000000407f168fbbc2dc8',
+        MIC: '00000000',
+        MIC_validity: true },
+     rxpk:
+      { time: '2017-08-12T11:08:13.803Z',
+        tmst: 1502536093,
+        chan: 2,
+        rfch: 0,
+        freq: 868.5,
+        stat: 1,
+        modu: 'LORA',
+        datr: 'SF10BW125',
+        codr: '4/6',
+        rssi: -35,
+        lsnr: 5.1,
+        size: 16,
+        data: 'QBIAEEgAAAAEB/Fo+7wtyA==' },
+     deveui: '78af580312121215',
+     devaddr: '48100012' },
+  
+  response: null,
+
+  created_at: '2017-08-12T11:08:14.391Z',
+  updated_at: '2017-08-12T11:08:14.391Z',
+  
+  app: { id: '9bda6968-3848-4738-8266-76b94521f5d5' },
+  
+  node:
+   { id: 'bb8eb961-7d98-471a-bb5e-44ecc9c961fb',
+     serial: '78af580312121215',
+  
+     node_groups: [ [Object] ] },
+
+  	 core_session_id: 'e14ad78e-2e06-4fbd-93db-b09375c04dba' 
+
+  }
+
+```
+
 
  * <b>schema</b><br/>
+ The schema available in the object reflects the schema defined at node level with the last updated values, <b>value</b> and <b>updated_at</b>
  Here is an example of a schema, which is a list of variables keys with their characteristics:
 
 ```javascript
-
-// JSON rappresentation of the schema object
  
+ // JSON rappresentation of the schema object for a single variable 'temperature'
  {
+   "temperature": 
+   		{ 
+   			"mode": "OUTPUT", 
+   			"measurement_unit":"°C",
+   			"value": 28.41, 
+   			"max_value": "10", 
+   			"min_value": "50", 
+   			"updated_at": "2017-08-18T09:23:37Z", 
+   			"store_in_time_series": true
+   		}
+  }
  
-  "humidity": {"type": "Numeric", "mode":"output", "value":"76", "measurement_unit": "%", "max_value": "", "min_value": "", "updated_at": "2017-08-17T21:25:25Z", "store_in_time_series": "false"},
-  "airtemperature": {"type": "Numeric", "mode":"output", "value":"24.2","measurement_unit": "°C", "max_value": "", "min_value": "","updated_at": "2017-08-17T21:25:25Z", "store_in_time_series": "false"}
- 
- 
-
 
  // Javascript object
 
  var node_schema = schema;
 
- node_schema.humidity.value = 50;
- node_schema.airtemperature.value = 23.2;
-
+ current_temperature = node_schema.temperature.value ;
+ measurement_unit = node_schema.temperature.measurement_unit ;
+ 
+ message = "Temperature is "+current_temperature+ " "+measurement_unit;
  ```
 
 In the decoder script only the schema <b>output</b> variables are exposed. All attributes, apart from value, are read only and cannot be updated by the script via the update_schema object. The updated_at is the last time in which the variable has been updated.<br/>
