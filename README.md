@@ -428,11 +428,51 @@ Once an alert is opened it will not trigger anymore unless you close it. If you 
 // need to assign the update_schema object for the update to be persistent
 update_alerts = alerts;
 ```
+<br/>
+Here some more complex examples with endpoints that are called when the alerts are triggered:
+
+```javascript
+
+var _decoded = schema;
+var _alert = alerts;
+
+
+update_alerts = [];
+
+var temp_alert = (Math.random()*10)+30;
+
+var temperature_alert = {}
+
+if (_decoded.temperature.value > temp_alert) 
+{
+  
+   temperature_alert.message = "Temperature Alert for node:"+raw_data.node.serial+"\n Temperature value is:"+_decoded.temperature.value+" while alert level is:"+temp_alert+"\n";
+  
+   temperature_alert.variable_name = 'temperature';
+   temperature_alert.alert_type = 'max';
+   temperature_alert.status = 'open';
+   temperature_alert.value = _decoded.temperature.value;
+   temperature_alert.endpoints = [  {"endpoint_type":"email", "endpoint_data":{"from":"info@gimasi.ch", "to":"info@gimasi.ch", "subject":"Giotty Alert!", "body": temperature_alert.message} } ]
+ } 
+else
+{
+   message = "Temperature Alert for node:"+raw_data.node.serial+" Has been closed! \n";
+  
+   temperature_alert.variable_name = 'temperature';
+   temperature_alert.alert_type = 'max';
+   temperature_alert.status = 'close';
+   temperature_alert.endpoints = [  {"endpoint_type":"email", "endpoint_data":{"from":"info@gimasi.ch", "to":"info@gimasi.ch", "subject":"Giotty Alert Closed!", "body": message} } ]
+
+}
+
+update_alerts.push(temperature_alert);
+
+```
 
 <b>Input</b>
 
 * <b>raw_data</b><br/>
-This is the message arriving directly from the node ( same as in the Decoder script).
+This is the message arriving directly from the node (same as in the Decoder script).
 
 * <b>schema</b><br/>
 Schema variables that have been updated by the Decoder script. Usually these are the variables used to trigger alerts.
@@ -447,7 +487,7 @@ Here the JSON object of alerts
 "temperature": {"type": "max", "status": "active", "message": "Max temperature exceeded: 20.19 > 11.802603092029429", "alert_id": 12689, "duration": 10291, "endpoints": [], "last_value": 20.59, "started_at": "2017-08-16T14:33:45.616Z", "updated_at": "2017-08-16T14:33:55.907Z"}}}
 ]
 ```
-* <b>storage</b>
+* <b>storage</b><br/>
 The <b>storage</b> objects gives acces to a series of storage function that allow the script to persist data. There are two storages - local and global. The local storage is accessible only to the node while the global storage is accessible to all nodes in the Application. To use the global storage you have 2 methods get and set, that will store a key value pair, instead to use the local storage you need to update the <b>update_local_storage</b> OUTPUT object <b>update_storage</b> ( more information in the STORAGE section )<br/>
 Here is an example:<br/>
 
@@ -490,22 +530,26 @@ As shown in the example above the object that will receive the data for openning
 To store local node persistent data.
 
 ## Application Script
-The application script can be seen as the controller in the MVC model.<br/>
-All model data arrive to via the input objects 'schema' and 'alerts' and the <b>VIEW</b> can be controlled via the output objects 'out_params','call_endpoints','send_to_node'
+The application script can be seen as the controller of the MVC model.<br/>
+The INPUT objects ( the Model of the MVC ) are 'raw_data','schema' and 'alerts' and the <b>VIEW</b> behaviour can be controlled via the output objects 'out_params','call_endpoints','send_to_node'.
 
 <b>Input</b>
 
-* raw_data
+* <b>raw_data</b><br/>
+The data arriving directly from the node (same as in the Decoder and Alert script).
 
-* schema
+* <b>schema</b><br/>
+The Decoded 
 
-* alerts
+* <b>alerts</b>
+
+* <b>storage</b>
 
 <b>Output</b>
 
-* out_params
+* <b>out_params</b>
 
-* save_timeseries
+* <b>save_timeseries</b>
 
  ```javascript
   [
@@ -514,10 +558,9 @@ All model data arrive to via the input objects 'schema' and 'alerts' and the <b>
  ]
  ```
 
-* call_endpoints
+* <b>call_endpoints</b>
 
  ```javascript
-
 {
    "policy":"disable","override","add",
    "endpoints":[
@@ -527,9 +570,9 @@ All model data arrive to via the input objects 'schema' and 'alerts' and the <b>
                 {"endpoint_type":"giotty", "endpoint_data":{"endpoit_id":"89128981928"} }
               ]
 }
+```
 
-
-* send_to_node
+* <b>send_to_node</b>
 
  ```javascript
  [
@@ -552,88 +595,6 @@ call_endpoints =  { "policy":"add","endpoints":[ {"endpoint_type":"giotty","endp
 ```
 
 
-## RAW MESSAGE
-
-```javascript
-{ 
-  id: 'ed391069-8363-460e-a1b1-8db95cf32434',
-
-  instance_id: 'fcc60389-e8ba-4657-b6e1-cd6894171b48',
-  company_id: '7ec6394d-9a92-4a28-86e6-eb141e9d722e',
-  user_id: 'e23ec145-6cc0-4af7-bdae-6c9c04f3b03b',
-  app_id: '9bda6968-3848-4738-8266-76b94521f5d5',
-
-  node_id: 'bb8eb961-7d98-471a-bb5e-44ecc9c961fb',
-  
-  log_type: 'data_up',
-  
-  app_id: '9bda6968-3848-4738-8266-76b94521f5d5',
-  node_id: 'bb8eb961-7d98-471a-bb5e-44ecc9c961fb',
-  node_type_code: 'lora868',
-  
-  node_multicast: false,
-  
-  station_id: '831e34f2-55cc-4d89-b2df-2291d60125b4',
-  
-  gateway_id: '0000AA555A00ABCD',
-  
-  payload: '010b8f',
-  
-  snr: 5.1,
-  rssi: -35,
-  
-  other:
-    { DataUp:
-  
-      { MHDR: [Object],
-        DevAddr: '48100012',
-        Fctrl: [Object],
-        FCnt: 0,
-        FOpts: '',
-        FPort: 4,
-        FPayloadType: 'data',
-        FPayload: '07f168',
-        FPayloadDeciphered: '010b8f',
-        FullFrame: '40120010480000000407f168fbbc2dc8',
-        MIC: '00000000',
-        MIC_validity: true },
-     rxpk:
-      { time: '2017-08-12T11:08:13.803Z',
-        tmst: 1502536093,
-        chan: 2,
-        rfch: 0,
-        freq: 868.5,
-        stat: 1,
-        modu: 'LORA',
-        datr: 'SF10BW125',
-        codr: '4/6',
-        rssi: -35,
-        lsnr: 5.1,
-        size: 16,
-        data: 'QBIAEEgAAAAEB/Fo+7wtyA==' },
-     deveui: '78af580312121215',
-     devaddr: '48100012' },
-  
-  response: null,
-
-  created_at: '2017-08-12T11:08:14.391Z',
-  updated_at: '2017-08-12T11:08:14.391Z',
-  
-  app: { id: '9bda6968-3848-4738-8266-76b94521f5d5' },
-  
-  node:
-   { id: 'bb8eb961-7d98-471a-bb5e-44ecc9c961fb',
-     serial: '78af580312121215',
-  
-     node_groups: [ [Object] ] },
-
-  	 core_session_id: 'e14ad78e-2e06-4fbd-93db-b09375c04dba' 
-
-  }
-
-```
-
-
 # DOWNLINKS
 To send data to a node you can use the REST interface or passing data through the the 'downlinks' exchange.<br/>
 Messages must be authenticated via an Auth Token.<br/>
@@ -651,13 +612,26 @@ Here an example of the message to be sent:
 ```
 
 # TIME SERIES
+To store node data and build historic series you can use the Time Series functionality.<br/>
+Time Series can be automatically generated at node level, by flagging the attribute in the node schema, or can be generated by the Application Script.<br/>
 
 
 # GROUPS
 In GIoTTY you can define groups of nodes.<br/>
 Groups have special aggregation 'schema' functions can be specified on any of the 'nodes' schema variables.<br>
 Once defined the data is automatically accumulated and you will have timeseries for the specified 'aggregration schema variables'.<br>
-Groups can be used also to assign scripts to nodes without having to add one by one..
+The aggregation functions available are:<br/>
+* COUNT()
+* DISTINCT()
+* INTEGRAL()
+* MEAN()
+* MEDIAN()
+* MODE()
+* SPREAD()
+* STDDEV()
+* SUM()
+
+Groups can be used also to assign scripts to nodes without having to add one by one, this is particulary
 
 # APPS
 In GIoTTY you have to specify at least one <b>App</b> to start adding you nodes.<br/>
@@ -669,8 +643,22 @@ Scripts are instead transversal to all Apps.
 As described before endpoints are the 'physical' endpoints to where the data will be forwarded. You can developed an application with full logic completely in GIoTTY infrastructure with no need to call external endpoints.<bt/>
 Currently we are supporting:
 
-* HTTP Rest 
-* Email
+* <b>HTTP</b> <br/>
+The HTTP Rest call is implemenent with the [request](https://www.npmjs.com/package/request) npm module. We are exposing the whole options parameters so that you can build anything that is possible with the request module.<br/>
+You need to specify the parameters as pure JSON ( see example below ) we have added also [Mustache](https://github.com/janl/mustache.js) templating engine that parses the whole JSON, so you can bind any parameter coming from the core scripting engine ( raw_data, schema, alerts or script ) to achieve fully dynamic calls based on the node message content.
+Here a quick example:<br/>
+
+```javascript
+{
+  "method":"GET",
+  "url":"http://www.gimasi.ch",
+  "qs":{ "node_id":"{{raw_data.node.id}}","payload":"{{raw_data.payload}}"}
+}
+```
+
+* <b>Email</b><br/>
+This is very simple, you have to fill a from, to, subject and body. In this initial version we are sending plain text emails. Mustache templating engine is available on the subject and body field.<br/>
+
 * MQTT
 * Microsoft Azure
 
