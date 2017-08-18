@@ -87,15 +87,15 @@ If you have a temperature sensor, it's schema variable would be logically called
 
 ``` 
 
-Schema variables can be declared both as <b>OUPUTS</b>, in this 'temperature' example the schema variable will be an OUTPUT, or as <b>INPUTS</b> which will be used by actuators when you need to set a value on the node.<br>
+Schema variables can be declared both as <b>OUTPUTS</b>, in this 'temperature' example the schema variable will be an OUTPUT, or as <b>INPUTS</b> which will be used by actuators when you need to set a value on the node.<br>
 The <b>value</b>b> attribute will be updated by the decoder script.<br>
 The <b>measurement_unit</b>b> attribute is a string value that can be used in UI creation.<br/>
 <b>min_value</b> and <b>max_value</b> are currently used only for UI widgets creation, but could be used for alerting generation via the alert scripts.<br/>
 <b>store_in_time_series</b> flag will enable automatic Time Series storage.<br/>
 <br>
-A schema needs a <b>Decoder Script</b> that runs in parallel with the schema. The decoder script will receive the raw data from the node and convert it to schema variables, that will be used throughout the system.<br/>
-The decoder script will add an additional attribute <b>updated_at</b> to the schema that will contain the timestamp of the last update of the schema <b>value</b>.<br/>
-For INPUT schema variable you need a corresponding <b>Encoder Script</b> that will convert physical values that have been computed by your scripts to the raw payload data that the node is expecting to receive.<br>
+A schema needs a <b>Decoder Script</b> that runs in parallel with the schema itself. The decoder script will receive the raw data from the node and convert it to schema variables, that will be used throughout the pipeline.<br/>
+The decoder script will add an additional attribute <b>updated_at</b> that will contain the timestamp of the last update of the schema <b>value</b>.<br/>
+For the INPUT schema you need a corresponding <b>Encoder Script</b> that will convert physical values that have been computed by your scripts to the raw payload data that the node is expecting to receive.<br>
 
 
 Here an exmple of a Decoder script:<br>
