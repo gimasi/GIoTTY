@@ -11,27 +11,47 @@ The ambition of GIoTTY, as of any IoT platform, is to connect physical nodes whi
 GIoTTY can be seen as an IoT HAL (Hardware Abstraction Layer) that connects different technologies converting everything to JSON messages that can be handled easily removing the effort of the underlining protocols and RF technologies.<br/>
 GIoTTY is a set of technologies which can be leveraged through an <b>API</b> [link to come] or via the GIoTTY Cloud Application [link to come].
 
-The core of GioTTY is based on an message queue which is interleaved by scripts that are executed as node data passes through, enriching its payload with additional information.<br/>
+The core of GioTTY is based on an message queue which is interleaved by scripts that are executed as node data passes through, enriching the message payload with additional information.<br/>
 
 The message queue steps are:<br/>
 
         [need picture to describe this]
-        Uplinks => Decoder => Alerts => Application Scripts => Endpoints 
+        Node => Logging => Decoder => Alerts => Application Scripts => Endpoints 
 
 This message queue runs from the node to the final 'Endpoint'.<br/>
 
-There is a special internal 'Endpoint':
-        DashBoards
-
-Which is the GIoTTY fully customized HTML5 Dashboard system, allowing to build  'fully featured' Dashboards for your IoT data.<br/>
-
-As introduced above there is also a queue that runs the 'other' way, from the Application Server to the nodes. This is used to actuate actuators on the field.
+There is also a queue that runs the 'other' way, from the an 'Endpoint' to a node/s. This is used to actuate actuators on the field.
 
       [need picture to describe this]
-      Downlinks => Output
+      Endpoints => Downlinks => Node
 
 <br/>
-The power of the whole architecture that all scripts are user defined so a complete vertical IoT application can be delivered just by simply supplying the correct scripts in the pipeline, via its API or the Cloud Application.
+The power of GIoTTY comes from the user definable scripting architecture. A complete vertical IoT application can be delivered just by simply supplying the correct scripts in the pipeline, either via its API or the Cloud Application.
+
+
+# Scripting and Core Pipeline
+
+Scripts are categorized based on their execution position on the pipeline. Based on the 'category' or position on the pipeline the scripting engine will provide different INPUT and OUTPUT objects to the script<br/>
+
+Here is a diagram of the core message queue/pipeline, showing where the different type of user scripts are executed.<br/>
+
+
+				[need picture to describe this]		
+				Logging => ( user Decoder SCRIPT ) => Decoded Data => (user Alerts SCRIPT ) => Alerts => (user Appliation SCRIPT) => Application Scripts => ( Core Routing SCRIPT ) => Endpoints 
+
+
+The node data enters the pipeline and is logged, then a Decoder script is executed which transforms the raw payload data in schema variables - every node has a predefined schema, which defines the properties it measures.<br/> 
+
+The alert script is where the user will put application alerting logic and where alerting endpoints can be set<br/>. 
+The final 'Application Script' is executed to handle complex logic, storing to timeseries, actuacte other nodes and  define 'Endpoint' logic</br>
+In other IoT platforms scripting is available but it is usually condensed in just one script per node, we have designed this fragmented setup to achieve a better code optimization and reuse. Smaller scripts that are finalized to just one task. For example you could have 1000's of temperature nodes that share the same 'Temperature Decoder' script, but need different Alerting scripts. Or you can have alerting scripts that check if water temperature is reaching boiling value, and this script will work anywhere a 'boiling water' alarm is needed. 
+
+
+There is also the 'reverse' pipeline has only one script 'slot':
+
+				Enpoints => Downlinks => ( user Encoder Script ) => Nodes
+
+The Enconder script convert the schema variables to the raw payload data that the node is expecting to receive.
 
 
 ## MVC in IoT or DASE
@@ -43,25 +63,41 @@ The whole design mimics the MVC pattern delivering an IoT metaphor DA-S-E<br>
 
 The Controller can interfere with the final 'rendering' of the IoT 'View', redirecting or adding the final Endpoint where data should arrive.
 
-## Core Pipeline and User Scripts
-
-There is a defined data flow of information. Every step is handled by scripts which enrich the message data as it flows through.<br/>
-	
-				Log => ( user Decoder SCRIPT ) => Decoded Data => (user Alerts SCRIPT ) => Alerts => (user Appliation SCRIPT) => Application Scripts => ( Core Routing SCRIPT ) => Endpoints / DashBoards
-
-The node data enters the pipeline and is logged, then a Decoder script is executed which transforms the raw payload data in schema variables - every node has a predefined schema.<br/> 
-
-The alert script is where the user will put application alerting logic and where alerting endpoints can be set<br/>. 
-The final 'Application Script' is executed to handle complex logic, storing to timeseries, actuacte other nodes and  define 'Endpoint' logic</br>
-In other IoT platforms scripting is available but it is usually condensed in just one script per node, we have designed this fragmented setup to achieve a better code optimization and reuse. Smaller scripts that are finalized to just one task. For example you could have 1000's of temperature nodes that share the same 'Temperature Decoder' script, but need different Alerting scripts. Or you can have alerting scripts that check if water temperature is reaching boiling value, and this script will work anywhere a 'boiling water' alarm is needed. 
-
 
 # Node Schema, Decoder and Encoder Scripts
-As already anticipated every node can (should) have a schema defined.<br/>
-If you have a temperature sensor, it's schema variable would be logically called 'temperature'.
-A schema needs a <b>decoder script</b> that runs in parallel with the schema. The decoder script will receive the raw data from the node and convert it to schema variables, that will be used throughout the system.<br/>
+Every node can (should) have a schema defined.<br/>
+
+If you have a temperature sensor, it's schema variable would be logically called 'temperature', here a JSON example of its definition:<br/>
+
+```javascript
+
+// JSON rappresentation of the schema object for a single variable 'temperature'
+ 
+ {
+    "temperature": 
+    	{
+    	  "mode": "OUTPUT", 
+    	  "value": "",
+    	  "measurement_unit":"°C",
+    	  "min_value": "10", 
+    	  "max_value": "50", 
+    	  "store_in_time_series": true|false
+    	}
+ }
+
+``` 
+
 Schema variables can be declared both as <b>OUPUTS</b>, in this 'temperature' example the schema variable will be an OUTPUT, or as <b>INPUTS</b> which will be used by actuators when you need to set a value on the node.<br>
-For ouptut schema variable you need a corresponding <b>Encoder Script</b> that will convert physical values that have been computed by your scripts to the raw payload data that the node is expecting to receive.<br>
+The <b>value</b>b> attribute will be updated by the decoder script.<br>
+The <b>measurement_unit</b>b> attribute is a string value that can be used in UI creation.<br/>
+<b>min_value</b> and <b>max_value</b> are currently used only for UI widgets creation, but could be used for alerting generation via the alert scripts.<br/>
+<b>store_in_time_series</b> flag will enable automatic Time Series storage.<br/>
+<br>
+A schema needs a <b>Decoder Script</b> that runs in parallel with the schema. The decoder script will receive the raw data from the node and convert it to schema variables, that will be used throughout the system.<br/>
+The decoder script will add an additional attribute <b>updated_at</b> to the schema that will contain the timestamp of the last update of the schema <b>value</b>.<br/>
+For INPUT schema variable you need a corresponding <b>Encoder Script</b> that will convert physical values that have been computed by your scripts to the raw payload data that the node is expecting to receive.<br>
+
+
 Here an exmple of a Decoder script:<br>
 ```javascript
 
@@ -160,18 +196,12 @@ node_payload = "02"+payload1+payload2+"01"+payload3
 
  ```
 
-
-# Scripting
-The behaviour of the pipeline can be customised via Javascript sripts. At every stage the scripting engine will provide INPUT objects and accept OUTPUT objects.<br/>
-
-There is also a basic logging function - log(object) - that can be used for very simple debugging functionality. Logs for every script can be viewed direcly from the cloud interface, in the log files you will also find traces of errors.<br>
 Here, divided by script type, the various INPUT and OUTPUT objects available and some quick examples.
 
 ## Decoder
 The script will receive in input the <b>raw_data</b> and the <b>schema</b> objects. The code will then update the schema values and pass them over via the output <b>update_schema</b> object.<br/>
-The node schema can be declared via the corresponding API or the GIoTTY cloud application.<br>
-The decoder script engine will automatically store schema variables, that have been flagged accordingly, to a <b>Time Series</b> ( see TIME SERIES section ).<br>
-If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</B> allowing different kinds of aggregation ( see GROUP section ).
+The decoder script engine will automatically store schema variables, that have been flagged accordingly, to a <b>Time Series</b> ( see [pollo](#TIME SERIES) section ).<br>
+If a node is part of a Group, data will be stored in a 'Group' <b>Time Series</B> allowing different kinds of aggregation. Also if a Group has a Decoder Script assigned all nodes part of the group will inherit that script ( see GROUP section for full description).
 
 <b>Input</b>
 
@@ -494,6 +524,9 @@ Here an example of the message to be sent:
 }
 ```
 
+# TIME SERIES
+
+
 # GROUPS
 In GIoTTY you can define groups of nodes.<br/>
 Groups have special aggregation 'schema' functions can be specified on any of the 'nodes' schema variables.<br>
@@ -515,6 +548,11 @@ Currently we are supporting:
 * MQTT
 * Microsoft Azure
 
+There is a special internal 'Endpoint':
+* DashBoards
+
+Which is the GIoTTY fully customized HTML5 Dashboard system, allowing to build  'fully featured' Dashboards for your IoT data.<br/>
+
 # ALERTS
 This functionality will show you the Alerts Log of your applications.
 You can see which alert are pending.
@@ -529,3 +567,14 @@ You can see which alert are pending.
 
 
 
+
+
+# Node Schema
+
+
+
+## Core Pipeline and User Scripts
+
+There is a defined data flow of information. Every step is handled by scripts which enrich the message data as it flows through.<br/>
+	
+				Log => ( user Decoder SCRIPT ) => Decoded Data => (user Alerts SCRIPT ) => Alerts => (user Appliation SCRIPT) => Application Scripts => ( Core Routing SCRIPT ) => Endpoints / DashBoards
