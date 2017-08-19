@@ -502,19 +502,13 @@ log( raw_data.core_session_id);
 
 log("NODE:"+raw_data.node_id);
 
-storage.global.get("myVariable",function(err,reply){	  
-  if ( reply )          
-    console.log("myVariable is set => "+reply.toString());      
-  else  {    
+value = storage.global.get("myVariable");
+if (!value)
+{
     log("myVariable is not set");  	    
     variable = "The node that set the variable is :"+raw_data.node_id;        
-    storage.global.set("myVariable",variable, function (err, reply) {        
-      log("Node=>"+raw_data.node_id);      
-  	  log(err);
-      log(reply);        	
-    });      
-  }})
-
+    storage.global.set("myVariable",variable)
+}
 
 if (raw_data.node_id == 'bb8eb961-7d98-471a-bb5e-44ecc9c961fb')
   update_local_storage = object;
@@ -590,7 +584,7 @@ Change the 'Endpoint'
  ```javascript
 
 log("Running...");
-call_endpoints =  { "policy":"add","endpoints":[ {"endpoint_type":"giotty","endpoint_data":{"endpoint_id":"24"} } ] };
+call_endpoints =  { "policy":"add","endpoints":[ {"endpoint_type":"giotty","endpoint_data":{"endpoint_id":"bb8eb961-7d98-471a-bb5e-44ecc9c961fb"} } ] };
 
 ```
 
@@ -658,6 +652,16 @@ Here a quick example:<br/>
 
 * <b>Email</b><br/>
 This is very simple, you have to fill a from, to, subject and body. In this initial version we are sending plain text emails. Mustache templating engine is available on the subject and body field.<br/>
+
+```javascript
+{
+  "from":"me@me.com",
+  "to":"you@you.com",
+  "subject":"Information from node {{raw_data.node.id}}"
+  "body":"The temperature in the kitchen is {{schema.temperature.value}} {{schema.temperature.measurement_unit}}"
+}
+
+```
 
 * MQTT
 * Microsoft Azure
