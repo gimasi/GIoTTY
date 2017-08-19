@@ -678,17 +678,3 @@ You can see which alert are pending.
 
 
 # DASHBOARDS
-
-
-
-
-
-# Node Schema
-
-
-
-## Core Pipeline and User Scripts
-
-There is a defined data flow of information. Every step is handled by scripts which enrich the message data as it flows through.<br/>
-	
-				Log => ( user Decoder SCRIPT ) => Decoded Data => (user Alerts SCRIPT ) => Alerts => (user Appliation SCRIPT) => Application Scripts => ( Core Routing SCRIPT ) => Endpoints / DashBoards
