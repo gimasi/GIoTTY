@@ -14,10 +14,8 @@ GIoTTY is a set of technologies which can be leveraged through an <b>API</b> [li
 The core of GioTTY is based on an message queue which is interleaved by scripts that are executed as node data passes through, enriching the message payload with additional information.<br/>
 
 The message queue steps are:<br/>
-
-        [need picture to describe this]
-        Node => Logging => Decoder => Alerts => Application Scripts => Endpoints 
-
+<img src="/docs/giotty.png"/>
+<br/>
 This message queue runs from the node to the final 'Endpoint'.<br/>
 
 There is also a queue that runs the 'other' way, from the an 'Endpoint' to a node/s. This is used to actuate actuators on the field.
